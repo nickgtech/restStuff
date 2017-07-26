@@ -3,7 +3,7 @@ from flask import Flask, jsonify, abort, make_response, request, url_for
 # this is the python centric way of instantiating an instance of the class
 app = Flask(__name__)
 
-# Array of tasks to be used as a temp databse for the example application
+# List of tasks to be used as a temp databse for the example application
 tasks = [
     {
         'id': 1,
@@ -48,10 +48,9 @@ def get_tasks():
 
 @app.route('/todo/api/v1.0/tasks/<int:task_id>', methods=['GET'])
 def get_task(task_id):
-    print "my request ", request.json
     for task in tasks:
         if task['id'] == task_id:
-            return jsonify({'task': [make_public_task(task) for task in tasks]})
+            return jsonify({'task': [make_public_task(task)]})
     abort(404)
 
 # the not_found function is called whenever we do an abort
@@ -80,7 +79,7 @@ def create_task():
         'done': False
     }
     tasks.append(task)
-    return jsonify({'task': [make_public_task(task) for task in tasks]}), 201
+    return jsonify({'task': [make_public_task(task)]}), 201
 
 # Using our URI we ad the task ID to make sure we are updating the right
 # task. We use the PUT verb to send the HTTP data. We do some validation
@@ -96,7 +95,7 @@ def update_task(task_id):
         abort(400)
     if 'title' in request.json and type(request.json['title']) != unicode:
         abort(400)
-    if 'description' in request.json and type(request.json['description']) is not unicode:
+    if 'description' in request.json and type(request.json['description']) != unicode:
         abort(400)
     if 'done' in request.json and type(request.json['done']) is not bool:
         abort(400)
